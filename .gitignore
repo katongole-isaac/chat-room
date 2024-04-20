@@ -1,0 +1,11 @@
+# Node modules
+node_modules/
+
+# dist
+dist/
+
+# Nextjs's Cache
+.next*
+
+# secrets
+.env*.local
