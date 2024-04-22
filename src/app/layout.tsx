@@ -14,7 +14,11 @@ export default function RootLayout({ children }) {
   return (
     <html>
       <body suppressHydrationWarning={true}>
-        <ThemeAppProvider>{children}</ThemeAppProvider>
+        <ThemeAppProvider>
+          <div className="dark:bg-dark  dark:text-textDark bg-light text-textLight max-h-max">
+            {children}
+          </div>
+        </ThemeAppProvider>
       </body>
     </html>
   );
