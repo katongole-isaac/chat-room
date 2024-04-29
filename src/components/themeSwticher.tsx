@@ -3,6 +3,7 @@
 import React from "react";
 import { useTheme } from "next-themes";
 import { MdOutlineLightMode, MdOutlineDarkMode } from "react-icons/md";
+import dynamic from "next/dynamic";
 
 export default function ThemeSwticher() {
   const { theme, setTheme } = useTheme();

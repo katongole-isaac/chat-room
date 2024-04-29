@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
     <html>
       <body suppressHydrationWarning={true}>
         <ThemeAppProvider>
-          <div className="dark:bg-dark  dark:text-textDark bg-light text-textLight max-h-max">
+          <div className="dark:bg-dark  dark:text-light-300 bg-light text-dark-200  max-h-max">
             {children}
           </div>
         </ThemeAppProvider>

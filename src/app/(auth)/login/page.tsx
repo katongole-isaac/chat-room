@@ -34,7 +34,7 @@ export default function Login() {
   };
 
   return (
-    <div className="">
+    <div >
       <form
         onSubmit={handleSubmit((data) => onSubmit(data))}
         autoComplete="off"
