@@ -26,3 +26,7 @@
   background: #555 ;
   
 }
+
+.hidden-scrollbar::-webkit-scrollbar {
+  display: none;
+}

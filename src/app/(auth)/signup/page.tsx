@@ -1,40 +1,55 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useState } from "react";
-import { FieldValues, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { FaEyeSlash, FaRegEye } from "react-icons/fa";
-import { z } from "zod";
-
-const schema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  username: z
-    .string()
-    .regex(
-      new RegExp(/^(?=.*[A-Za-z])[A-Za-z\d_-]{3,30}$/),
-      "Please ensure that your username only contains letters, digits, underscores, or hyphens"
-    ),
-  password: z
-    .string()
-    .regex(new RegExp(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d\S]{6,}$/), {
-      message:
-        "Please ensure that your password contains at least 6 characters, including at least one digit",
-    }),
-});
+import { FieldValues, useForm } from "react-hook-form";
+import http from "../../../service/http";
+import config from "../../../configs/default.json";
+import { signupSchema } from "../../../lib/mongo/schemas";
+import {  redirect, useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function SignUp() {
+
+  const router = useRouter();
+
   const [hideAndShowPassword, setHideAndShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(signupSchema),
   });
 
   const onSubmit = (data: FieldValues) => {
-    console.log(data);
+   
+    http
+      .post(config.signup, data)
+      .then( () => {
+
+         signIn("credentials",{
+          
+          email: data?.email,
+          password: data?.password 
+
+        })
+        .then(res => {
+          
+          if(res.status <= 200 && res.status <= 299 && !res.error)console.log("here")
+            // router.replace("/chat");
+
+        })
+       
+      })
+      .catch((ex) => {
+        console.error("error: ", ex)
+      })
+      .finally(() => { console.log("done")});
+
   };
+
   return (
     <div className="">
       <form
@@ -97,7 +112,7 @@ export default function SignUp() {
                 className={`border w-full pr-8  outline-2 outline-offset-[2.5px] dark:outline-offset-[1px] dark:outline-none ${
                   "password" in errors
                     ? " outline-rose-400 border-rose-400 dark:border-rose-400 dark:focus:outline-rose-400"
-                    : " outline-blue-200border-stone-400 dark:focus:outline-gray-700"
+                    : " outline-blue-200 border-stone-400 dark:focus:outline-gray-700"
                 }  rounded-md px-2 p-[2px]`}
               />
               {hideAndShowPassword ? (

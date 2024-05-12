@@ -32,8 +32,8 @@ export default function MessageInput({ onSend }: Props) {
     e.preventDefault();
 
     const pastedData = e.clipboardData.getData("text/plain");
-
-    inputRef.current.innerHTML += pastedData;
+    
+    inputRef.current.innerHTML += pastedData.toString();
   };
 
   const onkeydown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -45,7 +45,7 @@ export default function MessageInput({ onSend }: Props) {
   };
 
   const handleInputFocus = (e: KeyboardEvent) => {
-    if ((e.ctrlKey, e.key.toLowerCase() === "k")) {
+    if ((e.ctrlKey && e.key.toLowerCase() === "k")) {
       e.preventDefault();
       inputRef.current.focus();
     }
@@ -63,7 +63,7 @@ export default function MessageInput({ onSend }: Props) {
       <div className="border border-gray-500 rounded-md w-full  py-1 relative ">
         <div
           ref={inputRef}
-          contentEditable
+          contentEditable="plaintext-only"
           onKeyDown={onkeydown}
           onInput={handleInput}
           onPaste={handlePaste}

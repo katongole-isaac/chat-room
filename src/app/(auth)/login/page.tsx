@@ -1,10 +1,12 @@
 "use client";
 
 import { z } from "zod";
+import { signIn } from "next-auth/react";
 import React, { useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { FaEyeSlash, FaRegEye } from "react-icons/fa";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 
 const schema = z.object({
   email: z
@@ -22,6 +24,9 @@ const schema = z.object({
 });
 
 export default function Login() {
+
+  const router = useRouter();
+
   const [hideAndShowPassword, setHideAndShowPassword] = useState(false);
   const {
     register,
@@ -29,14 +34,25 @@ export default function Login() {
     formState: { errors },
   } = useForm({ resolver: zodResolver(schema) });
 
-  const onSubmit = (data: FieldValues) => {
-    console.log(data);
+  const onSubmit = async (data: FieldValues) => {
+
+    const res = await signIn("credentials", {
+      ...data,
+      callbackUrl: "/chat",
+      redirect: false,
+    });
+
+    if(res.status <= 200 && res.status <= 299 && !res.error) 
+      router.replace("/chat");
+
+    console.log("Error: ", res);
   };
 
   return (
-    <div >
+    <div>
       <form
-        onSubmit={handleSubmit((data) => onSubmit(data))}
+        onSubmit={handleSubmit((data) =>    onSubmit(data)
+        )}
         autoComplete="off"
       >
         <div className="space-y-4">
