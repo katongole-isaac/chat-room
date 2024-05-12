@@ -5,7 +5,7 @@ const ThemeButton = dynamic(() => import("../../../components/themeSwticher"));
 
 export default function ChatHeader() {
   return (
-    <div className="px-2 h-full">
+    <div className="px-3 h-full">
       <div className="h-full flex justify-between items-center">
         <h1 className="text-2xl font-bold">Messages </h1>
         <ThemeButton />

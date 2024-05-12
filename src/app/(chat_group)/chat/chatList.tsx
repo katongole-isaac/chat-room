@@ -4,7 +4,7 @@ import Avatar from "../../../components/common/avatar";
 export default function ChatList() {
   return (
     <div className="hover:bg-[#dfdfe1] hover:dark:bg-dark-100 cursor-pointer">
-      <div className=" w-full p-1 px-2 flex items-center gap-2 overflow-x-hidden">
+      <div className=" w-full p-1 px-3 flex items-center gap-2 overflow-x-hidden">
         <div className="">
           <Avatar avatarTheme="default" />
         </div>

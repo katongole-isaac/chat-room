@@ -8,7 +8,7 @@ export default function ChatListings() {
     <div className="h-full border1 border-rose-700">
       <div className="gap-2 flex flex-col h-full  ">
         {/* title */}
-        <div className="min-h-20   ">
+        <div className="min-h-20 ">
           <ChatHeader />
         </div>
 
@@ -18,7 +18,7 @@ export default function ChatListings() {
         </div>
 
         {/* other controls */}
-        <div className="min-h-8 px-2 flex items-center">
+        <div className="min-h-8 px-3 flex items-center">
           <p className="font-medium text-lg dark:text-gray-200">Your conversations</p>
         </div>
 

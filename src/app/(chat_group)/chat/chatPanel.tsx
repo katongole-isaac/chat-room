@@ -81,12 +81,12 @@ export default function ChatPanel() {
    },[])
 
   return (
-    <div className="max-w-[1200px] m-auto border-x dark:border-x-gray-700 h-full ">
+    <div className="max-w-[1400px] m-auto border-x dark:border-x-gray-700 h-full ">
       {/* <Theme /> */}
 
       <div className="flex gap-1 h-full ">
         {/* chat listings */}
-        <div className="basis-[22rem] border-r dark:border-r-gray-700 overflow-x-hidden">
+        <div className="basis-[24rem] border-r dark:border-r-gray-700 overflow-x-hidden">
           <ChatListings />
         </div>
 
@@ -99,7 +99,7 @@ export default function ChatPanel() {
 
           {/* messages */}
           <div className="flex-1 relative overflow-y-auto hidden-scrollbar mb-2">
-            
+
               <div
                 ref={messageContainerRef}
                 className="relative h-full border_ overflow-y-auto custom-scrollbar border-amber-500 flex flex-col-reverse gap-4  py-3"
