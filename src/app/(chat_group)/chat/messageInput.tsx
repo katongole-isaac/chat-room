@@ -4,25 +4,37 @@ import { marked } from "marked";
 
 interface Props {
   onSend: (message: string) => void;
+  onSetMessage: (message: string, reset: ()=> void) => void
+  _onMessageConfig?: (...arg:any) => void;
 }
-export default function MessageInput({ onSend }: Props) {
+export default function MessageInput({ onSend, onSetMessage, _onMessageConfig }: Props) {
   const inputRef = useRef<HTMLDivElement>(null);
 
   const [showPlaceholder, setShowPlaceholder] = useState(true);
 
+  const clearMessageInput = () => {
+
+      inputRef.current.innerText = ""; // reseting the input
+      setShowPlaceholder(inputRef.current.innerHTML === "");
+
+  }
+
   const onEnter = () => {
+
     const _message = inputRef.current.innerText;
 
-    inputRef.current.innerText = ""; // reseting the input
+    clearMessageInput();
 
-    setShowPlaceholder(inputRef.current.innerHTML === "");
-
-    if (_message.trim() === "") return;
+    if (_message.trim() === "") {
+      _onMessageConfig && _onMessageConfig( (prev:any) => ({...prev, message: ""}));
+      return;
+    }
 
     onSend(_message);
   };
 
   const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
+    onSetMessage(e.currentTarget.innerText, clearMessageInput);
     setShowPlaceholder(e.currentTarget.innerText === "");
   };
 
@@ -32,9 +44,27 @@ export default function MessageInput({ onSend }: Props) {
     e.preventDefault();
 
     const pastedData = e.clipboardData.getData("text/plain");
-    
-    inputRef.current.innerHTML += pastedData.toString();
+
+    insertTextAtCursorPositionOnPaste(pastedData);
+
   };
+
+  const insertTextAtCursorPositionOnPaste = (text:string) => {
+    const selection = window.getSelection();
+    if (!selection.rangeCount) return;
+
+    const range = selection.getRangeAt(0);
+    range.deleteContents();
+    const textNode = document.createTextNode(text);
+    range.insertNode(textNode);
+
+    // Move the cursor to the end of the inserted text
+    range.setStartAfter(textNode);
+    range.setEndAfter(textNode);
+    selection.removeAllRanges();
+    selection.addRange(range);
+}
+
 
   const onkeydown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -60,10 +90,11 @@ export default function MessageInput({ onSend }: Props) {
 
   return (
     <>
-      <div className="border border-gray-500 rounded-md w-full  py-1 relative ">
+      <div className="border border-gray-500 rounded-md w-full py-1 relative ">
         <div
+          id="editableDiv"
           ref={inputRef}
-          contentEditable="plaintext-only"
+          contentEditable="true"
           onKeyDown={onkeydown}
           onInput={handleInput}
           onPaste={handlePaste}

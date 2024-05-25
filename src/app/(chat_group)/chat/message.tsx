@@ -56,8 +56,8 @@ const Message = React.forwardRef<any, Props>((props, ref) => {
           </div>
 
           {/* message */}
-          <div className="font-normal">
-            <p className=""> {message}</p>
+          <div className="font-normal pt-1">
+            <pre className="text-wrap font-sans"> {message}</pre>
           </div>
         </div>
       </div>

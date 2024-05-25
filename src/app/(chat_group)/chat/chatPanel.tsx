@@ -7,12 +7,20 @@ import dynamic from "next/dynamic";
 import ChatListings from "./chatListings";
 import MessageTopBar from "./messageTopbar";
 import { FaAngleDown } from "react-icons/fa";
+import { MdSend } from "react-icons/md";
 
 
 const Theme = dynamic(() => import("../../../components/themeSwticher"));
 
 export default function ChatPanel() {
+
+  const [messageConfig, setMessageConfig] = useState({
+    message: "",
+    reset: null
+  });
+
   const [messages, setMessages] = useState([]);
+
   const messageRef = useRef<HTMLDivElement>(null);
   const messageContainerRef = useRef<HTMLDivElement>(null);
   const messageInputWrapperRef = useRef<HTMLDivElement>(null);
@@ -21,6 +29,8 @@ export default function ChatPanel() {
   const [ showScrollBottomButton, setShowScrollBottomButton ] = useState(false);
 
   const handleSendMessage = (msg: string) => {
+    if(msg.trim().length <= 0) return;
+
     console.log("msg: ", msg);
 
     console.log(messageRef.current);
@@ -31,7 +41,20 @@ export default function ChatPanel() {
       top: messageContainerRef.current.scrollHeight ,
       behavior: "auto",
     });
+
+    setMessageConfig(prev =>( {...prev, message: "" }));
   };
+
+  const  handleSendByButton = (msg:string, reset:()=>void) => {
+
+    if(msg.length <= 0) return;
+
+      handleSendMessage(msg);
+      reset();
+      
+    setMessageConfig(prev =>( {...prev, message: "" }));
+    
+  }
 
   const handleSmoothScrollToBottom = () =>  {
 
@@ -81,7 +104,7 @@ export default function ChatPanel() {
    },[])
 
   return (
-    <div className="max-w-[1400px] m-auto border-x dark:border-x-gray-700 h-full ">
+    <div className="max-w-[1300px] m-auto border-x dark:border-x-gray-700 h-full ">
       {/* <Theme /> */}
 
       <div className="flex gap-1 h-full ">
@@ -123,9 +146,16 @@ export default function ChatPanel() {
           {/* placeholder for the absolutely position element */}
           <div className="h-20" ref={messageInputWrapperRefPlaceholder} ></div>
           
-          <div ref={messageInputWrapperRef} className="absolute bottom-0 w-full dark:bg-dark  shadow-md min-h-20 border-t dark:border-t-gray-700 flex items-center py-2 px-4">
-            
-            <MessageInput onSend={handleSendMessage} />
+          <div ref={messageInputWrapperRef} className="absolute bottom-0 w-full dark:bg-dark shadow-md min-h-20 border-t dark:border-t-gray-700 flex items-center py-2 px-4 gap-2">
+            <MessageInput onSetMessage={(message, reset) => setMessageConfig({message,reset})} onSend={handleSendMessage} _onMessageConfig={setMessageConfig} />
+
+          <div className="w-10 h-10 hover:dark:bg-dark-100/95 hover:bg-neutral-300/60 cursor-pointer rounded-full flex items-center justify-center"
+          role="button"
+          onClick={() => handleSendByButton(messageConfig.message,messageConfig.reset)}
+          >
+            <MdSend className={`transition-colors text-xl ${messageConfig.message.length > 0 ? "": "dark:text-light-300/40 text-gray-400"}`} />
+          </div>
+
           </div>
         </div>
       </div>
