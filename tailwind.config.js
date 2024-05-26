@@ -3,6 +3,7 @@ module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {
+
       colors: {
         light: {
           DEFAULT: "#FDFEFE", 
@@ -18,6 +19,17 @@ module.exports = {
           100: "#292f36", // hover on dark theme 2
           200: "#23272F", // black text on light theme
         },
+      },
+
+      keyframes: {
+        shake: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '10%, 30%, 50%, 70%, 90%': { transform: 'translateX(-10px)' },
+          '20%, 40%, 60%, 80%': { transform: 'translateX(10px)' },
+        },
+      },
+      animation: {
+        shake: 'shake 0.3s ease-in-out',
       },
     },
   },

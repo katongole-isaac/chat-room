@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { signIn } from "next-auth/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { FaEyeSlash, FaRegEye } from "react-icons/fa";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,10 +17,7 @@ const schema = z.object({
     ),
   password: z
     .string()
-    .regex(new RegExp(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d\S]{6,}$/), {
-      message:
-        "Please ensure that your password contains at least 6 characters, including at least one digit",
-    }),
+    .min(1, { message: "Please ensure that a password is provided" }),
 });
 
 export default function Login() {
@@ -28,6 +25,9 @@ export default function Login() {
   const router = useRouter();
 
   const [hideAndShowPassword, setHideAndShowPassword] = useState(false);
+  const [isLoading , setIsLoading ] = useState(false);
+  const [loginError, setLoginError] = useState({message: ""});
+
   const {
     register,
     handleSubmit,
@@ -35,6 +35,9 @@ export default function Login() {
   } = useForm({ resolver: zodResolver(schema) });
 
   const onSubmit = async (data: FieldValues) => {
+
+    setIsLoading(true);
+    setLoginError( prev => ({...prev, message: ""}))
 
     const res = await signIn("credentials", {
       ...data,
@@ -44,9 +47,22 @@ export default function Login() {
 
     if(res.status <= 200 && res.status <= 299 && !res.error) 
       router.replace("/chat");
+    else
+      setLoginError( prev => ({...prev, message: "Incorrect credentials" }));
 
-    console.log("Error: ", res);
+    setIsLoading(false);
+
   };
+
+ useEffect(() => {
+
+    if(!loginError.message) return;
+
+    const timerId = setTimeout( () => setLoginError( prev => ({...prev, message: ""})) , 3000);
+
+    return () => clearInterval(timerId);
+
+  },[loginError]);
 
   return (
     <div>
@@ -64,9 +80,9 @@ export default function Login() {
               type="text"
               {...register("email")}
               id="email"
-              className={`border outline-2 outline-offset-[2.5px] dark:outline-offset-[1px] dark:outline-none 
+              className={`border outline-2 outline-offset-[2.5px] dark:outline-offset-[1px] dark:outline-none  ${loginError.message ? "animate-shake border-2" : ""} 
               ${
-                "email" in errors
+                "email" in errors || loginError.message
                   ? " outline-rose-400  border-rose-400  dark:border-rose-400 dark:focus:outline-rose-400 "
                   : " outline-blue-200 border-stone-400 dark:focus:outline-gray-700 "
               }    rounded-md px-2 p-[2px]
@@ -74,8 +90,7 @@ export default function Login() {
             />
             {errors?.email?.message && (
               <p className="text-xs text-rose-600">
-                {" "}
-                {errors?.email?.message as string}{" "}
+                {errors?.email?.message as string}
               </p>
             )}
           </div>
@@ -88,8 +103,8 @@ export default function Login() {
                 type={hideAndShowPassword ? "text" : "password"}
                 {...register("password")}
                 id="passwd"
-                className={`border w-full pr-8  outline-2 outline-offset-[2.5px] dark:outline-offset-[1px] dark:outline-none  ${
-                  "password" in errors
+                className={`border w-full pr-8  outline-2 outline-offset-[2.5px] dark:outline-offset-[1px] dark:outline-none  ${loginError.message ? "animate-shake border-2" : ""}  ${
+                  "password" in errors || loginError.message
                     ? " outline-rose-400 border-rose-400 dark:border-rose-400 dark:focus:outline-rose-400 "
                     : " outline-blue-200 border-stone-400 dark:focus:outline-gray-700 "
                 }   rounded-md px-2 p-[2px]  `}
@@ -116,9 +131,11 @@ export default function Login() {
           <div className="pt-3">
             <button
               type="submit"
-              className="py-1 px-1 border w-full rounded-md"
+              disabled={Boolean(isLoading)}
+              className={`py-1 px-1 border border-white/50 w-full flex justify-center items-center rounded-md disabled:bg-white/5  disabled:border-white/5 disabled:cursor-not-allowed `}
             >
-              Log in
+               <span className={`${isLoading ? "opacity-40" : ""} `} >Log in </span>  
+             
             </button>
           </div>
         </div>

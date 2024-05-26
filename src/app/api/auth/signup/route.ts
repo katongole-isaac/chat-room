@@ -17,11 +17,11 @@ import { hashPassword } from "../../../../lib/hashPassword";
 
   const emailInUse = await User.findOne({ email });
   
-  if(emailInUse) return NextResponse.json({message: "Email already in use"}, {status: 400 });
+  if(emailInUse) return NextResponse.json({message: "Email already in use", code: 2}, {status: 400 });
 
   const usernameInUse = await User.findOne({ username });
   
-  if(usernameInUse) return NextResponse.json({message: "Username already in use"}, {status: 400 });
+  if(usernameInUse) return NextResponse.json({message: "Username already in use", code : 1}, {status: 400 });
 
   const hashedPassword = await hashPassword(password);
 
