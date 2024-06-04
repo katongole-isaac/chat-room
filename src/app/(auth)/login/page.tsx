@@ -7,6 +7,8 @@ import { FieldValues, useForm } from "react-hook-form";
 import { FaEyeSlash, FaRegEye } from "react-icons/fa";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import http from "../../../service/http";
+import config from '../../../configs/default.json';
 
 const schema = z.object({
   email: z
@@ -39,18 +41,17 @@ export default function Login() {
     setIsLoading(true);
     setLoginError( prev => ({...prev, message: ""}))
 
-    const res = await signIn("credentials", {
-      ...data,
-      callbackUrl: "/chat",
-      redirect: false,
-    });
-
-    if(res.status <= 200 && res.status <= 299 && !res.error) 
-      router.replace("/chat");
-    else
+    http.post(config.login , data)
+    .then(res => {
+      console.log("res: ", res);
+      
+    })
+    .catch(ex => {
       setLoginError( prev => ({...prev, message: "Incorrect credentials" }));
+      console.log(ex);
 
-    setIsLoading(false);
+    })
+    .finally( () => setIsLoading(false));
 
   };
 

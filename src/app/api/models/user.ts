@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { z } from 'zod';
 import { Signup, signupSchema } from "../../../lib/mongo/schemas";
 
 const userSchema = new mongoose.Schema({
@@ -28,3 +29,12 @@ export default User;
 export const validateUserDto = (user: Required<Signup>) =>
   signupSchema.safeParse(user);
     
+
+const userLogins = z.object({
+  email: z.string().min(3,"Please provide a username (atleast 3 characters) or email"),
+  password: z.string().min(1, "Please provide a password")
+});
+
+export type UserLogin = Required<z.infer<typeof userLogins>>;
+
+export const validateUserLoginDto = (user: UserLogin ) => userLogins.safeParse(user);

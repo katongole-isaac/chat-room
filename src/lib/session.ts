@@ -1,8 +1,8 @@
 import { SignJWT, jwtVerify } from 'jose';
-import { cookies } from 'next/headers';
 
 const secret = process.env.NEXTAUTH_SECRET
 const encodedKey = new TextEncoder().encode(secret);
+const EXPIRES_AT = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000) // 14days
 
 export const encrypt = (payload:{[x:string]: any}) => new SignJWT(payload)
     .setProtectedHeader({alg: "HS256"})
@@ -11,32 +11,32 @@ export const encrypt = (payload:{[x:string]: any}) => new SignJWT(payload)
     .sign(encodedKey)
 
 export const decrypt = async (token:string) => {
-    try
-    {
-        const {payload} = await jwtVerify(token, encodedKey,{
-          algorithms: ["HS256"]        
-     });
+   
+    try {
 
-    return payload
+        const {payload} = await jwtVerify(token, encodedKey,{
+            algorithms: ["HS256"]        
+         });
+
+        return payload
 
     }catch(ex) {
-        console.error("[JWT Decrypt]: ", ex);
-        throw new Error(ex);
+
+        console.error("[JWT DECRYPT ERROR]: ",ex);
+
+        return null;
     }
+
 
 }
 
-export const createSession = async(userId:string) => {
-
-    const expiresAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000) // 14days
-    const session = await encrypt({ userId, expiresAt });
- 
-    cookies().set('next-auth.session-token',session, {
+export const generalCookieOptions : ()=>({[key:string]:any}) = () => ({
         path: "/",
         secure: true,
         httpOnly:true,
         sameSite: "lax",
-        expires: expiresAt
-    })
+        expires: EXPIRES_AT
+    });
 
-}
+export const createSession = async(userId:string) =>  await encrypt({ userId, expiresAt: EXPIRES_AT });
+ 

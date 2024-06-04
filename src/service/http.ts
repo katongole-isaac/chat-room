@@ -13,4 +13,5 @@ export default {
   post: axiosInstance.post,
   patch: axiosInstance.patch,
   delete: axiosInstance.delete,
+  request : axiosInstance.request
 };

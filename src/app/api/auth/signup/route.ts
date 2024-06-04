@@ -3,6 +3,7 @@ import { Signup } from "../../../../lib/mongo/schemas";
 import User, { validateUserDto } from "../../models/user";
 import apiErrorHandler from "../../../../lib/apiErrorHandler";
 import { hashPassword } from "../../../../lib/hashPassword";
+import { createSession, generalCookieOptions } from "../../../../lib/session";
 
 
  async function _POST(req: NextRequest) {
@@ -31,8 +32,13 @@ import { hashPassword } from "../../../../lib/hashPassword";
   });
 
   await newUser.save();
+
+  const res = NextResponse.json({ email, username, id: newUser._id });
+
+  const _sessionToken = await createSession(newUser._id);
+  res.cookies.set("x-session-token", _sessionToken, generalCookieOptions());
   
-  return NextResponse.json({});
+  return res
 }
 
 export const POST = apiErrorHandler(_POST);

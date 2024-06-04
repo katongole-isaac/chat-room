@@ -8,7 +8,6 @@ import http from "../../../service/http";
 import config from "../../../configs/default.json";
 import { signupSchema } from "../../../lib/mongo/schemas";
 import {  redirect, useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 
 const USERNAME_ERROR_CODE = 1;
 const EMAIL_ERROR_CODE = 2;
@@ -34,30 +33,17 @@ export default function SignUp() {
     setIsLoading(true);
     setSignUpError( prev => ({...prev, code: 0, message: ""}))
 
+    
     http
-      .post(config.signup, data)
-      .then( () => {
-
-        //  signIn("credentials",{
-          
-        //   email: data?.email,
-        //   password: data?.password 
-
-        // })
-        // .then(res => {
-          
-        //   if(res.status <= 200 && res.status <= 299 && !res.error)console.log("here")
-        //     // router.replace("/chat");
-
-        // })
-       
+    .post(config.signup, data)
+      .then( async (res) => {
+        console.log(res);
       })
       .catch((ex) => {
         console.error("error: ", ex);
 
         if(ex && ex?.response && ex?.response?.data) 
           setSignUpError({ code : ex.response.data.code , message: ex.response.data.message })
-
 
       })
       .finally(() => setIsLoading(false) );
@@ -74,9 +60,17 @@ export default function SignUp() {
 
   },[signUpError]);
 
+  const testCookie = () => {
+    http.get("/api/get-current-user")
+    .then(ex => console.log(ex))
+    .catch(ex => console.log("Error: ", ex))
+  }
+
 
   return (
     <div className="">
+        <button onClick={testCookie} >click me</button>
+
       <form
         onSubmit={handleSubmit((data) => onSubmit(data))}
         autoComplete="off"
