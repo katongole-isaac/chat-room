@@ -81,7 +81,9 @@ export default function ChatPanel() {
     messageContainerRef.current.addEventListener("scroll",messageDivScrollHandler);
 
     return () => {
-      messageContainerRef.current.removeEventListener("scroll",messageDivScrollHandler);
+
+      if(messageContainerRef.current)
+         messageContainerRef.current.removeEventListener("scroll",messageDivScrollHandler);
     }
 
    },[]);
@@ -91,8 +93,8 @@ export default function ChatPanel() {
    const _resizeObserver = new ResizeObserver( entries => {
       
       for(let entry of entries) {
-       
-        messageInputWrapperRefPlaceholder.current.style.height = entry.target.scrollHeight.toString() + "px"
+       if(messageInputWrapperRefPlaceholder.current)
+           messageInputWrapperRefPlaceholder.current.style.height = entry.target.scrollHeight.toString() + "px"
       } 
 
     });

@@ -1,12 +1,11 @@
 "use client";
 
 import { z } from "zod";
-import { signIn } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { FaEyeSlash, FaRegEye } from "react-icons/fa";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import http from "../../../service/http";
 import config from '../../../configs/default.json';
 
@@ -25,6 +24,9 @@ const schema = z.object({
 export default function Login() {
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  console.log('URL: ', searchParams.get('cb'));
 
   const [hideAndShowPassword, setHideAndShowPassword] = useState(false);
   const [isLoading , setIsLoading ] = useState(false);
@@ -43,7 +45,8 @@ export default function Login() {
 
     http.post(config.login , data)
     .then(res => {
-      console.log("res: ", res);
+
+      if(res.status >= 200 && res.status <= 299 ) router.replace(searchParams.get('cb') ?? '/chat' );
       
     })
     .catch(ex => {
@@ -68,8 +71,7 @@ export default function Login() {
   return (
     <div>
       <form
-        onSubmit={handleSubmit((data) =>    onSubmit(data)
-        )}
+        onSubmit={handleSubmit((data) => onSubmit(data) )}
         autoComplete="off"
       >
         <div className="space-y-4">

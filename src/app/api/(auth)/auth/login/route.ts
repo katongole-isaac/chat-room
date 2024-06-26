@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import apiErrorHandler from "../../../../lib/apiErrorHandler";
-import User, { UserLogin, validateUserLoginDto } from "../../models/user";
-import { verifyPassword } from "../../../../lib/hashPassword";
-import { createSession, generalCookieOptions } from "../../../../lib/session";
+import apiErrorHandler from "../../../../../lib/apiErrorHandler";
+import User, { UserLogin, validateUserLoginDto } from "../../../models/user";
+import { verifyPassword } from "../../../../../lib/hashPassword";
+import { REFRESH_TOKEN_EXPIRY_TIME, createSession, generalCookieOptions } from "../../../../../lib/session";
 
 async function _POST(req: NextRequest) {
     
@@ -26,7 +26,7 @@ async function _POST(req: NextRequest) {
       user = await User.findOne({ username: email  });
 
     if(!user) return NextResponse.json({ message: "Incorrect credentials" },{status: 400});
-
+  
     const { password: hash, _id  } = user;
 
     const isValidPassword = await verifyPassword(hash, password);
@@ -35,12 +35,12 @@ async function _POST(req: NextRequest) {
     
     const { email:_email, username } = user;
 
-
-    const _sessionToken = await createSession(_id.toString());
+    const {refresh_token, session_token} = await createSession(_id.toString());
     
     const res = NextResponse.json({ email: _email, username, id: _id });
 
-    res.cookies.set("x-session-token", _sessionToken, generalCookieOptions());
+    res.cookies.set("x-session-token", session_token, generalCookieOptions());
+    res.cookies.set("x-refresh-token", refresh_token, generalCookieOptions({expires: REFRESH_TOKEN_EXPIRY_TIME }));
 
     return res;
 

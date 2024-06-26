@@ -6,9 +6,9 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import apiErrorHandler from "../../../lib/apiErrorHandler";
-import { decrypt } from "../../../lib/session";
-import User from "../models/user";
+import apiErrorHandler from "../../../../lib/apiErrorHandler";
+import { decrypt } from "../../../../lib/session";
+import User from "../../models/user";
 
 const _GET = async (req: NextRequest) => {
 
@@ -21,11 +21,9 @@ const _GET = async (req: NextRequest) => {
 
     const user = await User.findOne({_id: decoded.userId});
 
-    if(!user) return NextResponse.json({message: "Not Authorized"},{ status: 403 } )
+    const _user = {username: user.username, id: user._id, email: user.email }
 
-    const data = {username: user.username, id: user._id, email: user.email }
-
-    return NextResponse.json({ data });
+    return NextResponse.json({ user: _user });
 
 };
 

@@ -8,9 +8,9 @@ const DynmaicThemeSwitcher = dynamic(
 );
 
 export default function AuthLayout({ children, params }) {
-  console.log(params);
+
   return (
-    <div className=" h-screen  relative">
+    <div className=" h-screen relative">
       <div className=" w-full flex flex-col gap-4 pb-6 justify-center items-center ">
         <div className="border border-gray-400 rounded-md w-[22rem]  mt-20 min-h-[25rem] px-7 py-7 ">
           <div className=" mb-5">

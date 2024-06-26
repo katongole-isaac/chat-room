@@ -60,17 +60,9 @@ export default function SignUp() {
 
   },[signUpError]);
 
-  const testCookie = () => {
-    http.get("/api/get-current-user")
-    .then(ex => console.log(ex))
-    .catch(ex => console.log("Error: ", ex))
-  }
-
-
+  
   return (
     <div className="">
-        <button onClick={testCookie} >click me</button>
-
       <form
         onSubmit={handleSubmit((data) => onSubmit(data))}
         autoComplete="off"
